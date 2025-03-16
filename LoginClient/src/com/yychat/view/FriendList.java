@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class FriendList extends JFrame {
+    final int FRIENDCOUNT = 50;
+    final int STRANGERCOUNT = 20;
+
     public FriendList(){
         JPanel friendPanel = new JPanel(new BorderLayout());
         JButton friendButton1 = new JButton("我的好友");
@@ -11,8 +14,17 @@ public class FriendList extends JFrame {
 
         JButton blackListButton1 = new JButton("黑名单");
         friendPanel.add(friendButton1, BorderLayout.NORTH);
+        JLabel[] friendLabel = new JLabel[FRIENDCOUNT];
 
+        JPanel friendListPanel = new JPanel(new GridLayout(FRIENDCOUNT,1));
+        for(int i = 0; i < FRIENDCOUNT; i++){
+            ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
+            friendLabel[i] = new JLabel(i + "号好友",icon,JLabel.LEFT);
+            friendListPanel.add(friendLabel[i]);
+        }
 
+        JScrollPane friendListScrollPane = new JScrollPane(friendListPanel);
+        friendPanel.add(friendListScrollPane, BorderLayout.CENTER);
 
         JPanel strangerBlackPanel = new JPanel(new GridLayout(2,1));
         strangerBlackPanel.add(strangerButton1);
@@ -26,6 +38,16 @@ public class FriendList extends JFrame {
         friendStrangerPanel.add(friendButton2);
         friendStrangerPanel.add(strangerButton2);
         strangerPanel.add(friendStrangerPanel, BorderLayout.NORTH);
+
+        JLabel[] strangerLabel = new JLabel[STRANGERCOUNT];
+        JPanel strangerListPanel = new JPanel(new GridLayout(STRANGERCOUNT,1));
+        for(int i = 0; i < STRANGERCOUNT; i++){
+            ImageIcon icon = new ImageIcon("./res/tortoise.gif");
+            strangerLabel[i] = new JLabel(i + "号陌生人",icon,JLabel.LEFT);
+            strangerListPanel.add(strangerLabel[i]);
+        }
+        JScrollPane strangerListScrollPane = new JScrollPane(strangerListPanel);
+        strangerPanel.add(strangerListScrollPane, BorderLayout.CENTER);
 
         JButton blackListButton2 = new JButton("黑名单");
         strangerPanel.add(blackListButton2, BorderLayout.SOUTH);
