@@ -7,7 +7,7 @@ public class FriendList extends JFrame {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
 
-    public FriendList(){
+    public FriendList(String name){
         JPanel friendPanel = new JPanel(new BorderLayout());
         JButton friendButton1 = new JButton("我的好友");
         JButton strangerButton1 = new JButton("陌生人");
@@ -62,13 +62,13 @@ public class FriendList extends JFrame {
         friendButton2.addActionListener(e -> {cardLayout.show(this.getContentPane(),"Card1");});
 
         this.setIconImage(new ImageIcon("./res/duck2.gif").getImage());
-        this.setTitle("好友列表");
+        this.setTitle(name + "好友列表");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(800, 600,350,250);
         this.setVisible(true);
     }
 
     public static void main(String[] args) {
-        FriendList friendList = new FriendList();
+        //FriendList friendList = new FriendList();
     }
 }
