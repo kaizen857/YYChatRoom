@@ -2,8 +2,11 @@ package com.yychat.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class FriendList extends JFrame {
+public class FriendList extends JFrame implements MouseListener {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
 
@@ -70,5 +73,35 @@ public class FriendList extends JFrame {
 
     public static void main(String[] args) {
         //FriendList friendList = new FriendList();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(e.getClickCount() ==2){
+            JLabel label = (JLabel) e.getSource();
+            String name = label.getText();
+            new FriendChat(name);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        JLabel label = (JLabel) e.getSource();
+        label.setForeground(Color.red);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        JLabel label = (JLabel) e.getSource();
+        label.setForeground(Color.blue);
     }
 }
