@@ -2,7 +2,6 @@ package com.yychat.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 public class ClientLogin extends JFrame{
     public ClientLogin(){

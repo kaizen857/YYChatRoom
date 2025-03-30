@@ -23,6 +23,7 @@ public class FriendList extends JFrame implements MouseListener {
         for(int i = 0; i < FRIENDCOUNT; i++){
             ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
             friendLabel[i] = new JLabel(i + "号好友",icon,JLabel.LEFT);
+            friendLabel[i].addMouseListener(this);
             friendListPanel.add(friendLabel[i]);
         }
 
@@ -72,7 +73,7 @@ public class FriendList extends JFrame implements MouseListener {
     }
 
     public static void main(String[] args) {
-        //FriendList friendList = new FriendList();
+        FriendList friendList = new FriendList("abc");
     }
 
     @Override
@@ -102,6 +103,6 @@ public class FriendList extends JFrame implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
         JLabel label = (JLabel) e.getSource();
-        label.setForeground(Color.blue);
+        label.setForeground(Color.black);
     }
 }
