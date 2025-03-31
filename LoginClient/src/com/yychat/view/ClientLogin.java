@@ -1,5 +1,8 @@
 package com.yychat.view;
 
+import com.yychat.control.YYchatClientConnection;
+import com.yychat.model.User;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -51,6 +54,8 @@ public class ClientLogin extends JFrame{
             String name = numberTextBox.getText();
             String password = new String(passwordTextBox.getPassword());
             if(tarName.equals(name) && tarPassword.equals(password)){
+                User user = new User(name, password);
+                new YYchatClientConnection().loginValidate(user);
                 new FriendList(name);
                 this.dispose();
             }
