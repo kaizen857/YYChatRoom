@@ -49,15 +49,15 @@ public class ClientLogin extends JFrame{
         JPanel buttonPanel = new JPanel();
 
         loginButton.addActionListener(event -> {
-            String tarName = "kaizen";
-            String tarPassword = "123456";
             String name = numberTextBox.getText();
             String password = new String(passwordTextBox.getPassword());
-            if(tarName.equals(name) && tarPassword.equals(password)){
-                User user = new User(name, password);
-                new YYchatClientConnection().loginValidate(user);
+            User user = new User(name, password);
+            if(new YYchatClientConnection().loginValidate(user)){
                 new FriendList(name);
                 this.dispose();
+            }
+            else{
+                JOptionPane.showMessageDialog(this,"密码错误！请重新登录！");
             }
         });
         buttonPanel.add(loginButton);

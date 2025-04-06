@@ -1,7 +1,10 @@
 package com.yychat.control;
 
+import com.yychat.model.Message;
+import com.yychat.model.MessageType;
 import com.yychat.model.User;
 
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -18,13 +21,22 @@ public class YYchatClientConnection {
         }
     }
 
-    public void loginValidate(User user){
+    public boolean loginValidate(User user){
+        boolean loginSuccess = false;
         try{
             OutputStream os = socket.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
             oos.writeObject(user);
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            Message message = (Message) ois.readObject();
+            if(message.getMessageType().equals(MessageType.LOGIN_VALIDATE_SUCCESS)){
+                loginSuccess = true;
+            }
+            oos.close();
+            os.close();
         }catch (Exception e){
             e.printStackTrace();
         }
+        return loginSuccess;
     }
 }
