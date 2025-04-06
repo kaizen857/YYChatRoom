@@ -25,28 +25,29 @@ public class FriendList extends JFrame {
 
             friendLabel[i].addMouseListener(new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
-                    if(e.getClickCount() ==2){
+                    if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
                         JLabel label = (JLabel) e.getSource();
                         String name = label.getText();
                         new FriendChat(name);
                     }
                 }
                 @Override
-                public void mousePressed(MouseEvent e) {
-                }
+                public void mousePressed(MouseEvent e) {}
                 @Override
-                public void mouseReleased(MouseEvent e) {
-
-                }
+                public void mouseReleased(MouseEvent e) {}
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    JLabel label = (JLabel) e.getSource();
-                    label.setForeground(Color.red);
+                    if(e.getSource() instanceof JLabel){
+                        JLabel label = (JLabel) e.getSource();
+                        label.setForeground(Color.red);
+                    }
                 }
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    JLabel label = (JLabel) e.getSource();
-                    label.setForeground(Color.black);
+                    if(e.getSource() instanceof JLabel){
+                        JLabel label = (JLabel) e.getSource();
+                        label.setForeground(Color.black);
+                    }
                 }
             });
 
@@ -88,8 +89,8 @@ public class FriendList extends JFrame {
         this.add(strangerPanel, "Card2");
         cardLayout.show(this.getContentPane(),"Card1");
 
-        strangerButton1.addActionListener(e -> {cardLayout.show(this.getContentPane(),"Card2");});
-        friendButton2.addActionListener(e -> {cardLayout.show(this.getContentPane(),"Card1");});
+        strangerButton1.addActionListener(e -> cardLayout.show(this.getContentPane(),"Card2"));
+        friendButton2.addActionListener(e -> cardLayout.show(this.getContentPane(),"Card1"));
 
         this.setIconImage(new ImageIcon("./res/duck2.gif").getImage());
         this.setTitle(name + "好友列表");
