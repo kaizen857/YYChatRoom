@@ -27,8 +27,8 @@ public class FriendList extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
                         JLabel label = (JLabel) e.getSource();
-                        String name = label.getText();
-                        new FriendChat(name);
+                        String friendName = label.getText();
+                        new FriendChat(name,friendName);
                     }
                 }
                 @Override

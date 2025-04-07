@@ -10,12 +10,12 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class YYchatClientConnection {
-    private Socket socket = null;
+    private static Socket socket = null;
     public YYchatClientConnection(){
 
         try {
             socket = new Socket("127.0.0.1", 3456);
-            System.out.println("客户端连接成功" + socket);
+            System.out.println("客户端连接成功" + getSocket());
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -24,19 +24,24 @@ public class YYchatClientConnection {
     public boolean loginValidate(User user){
         boolean loginSuccess = false;
         try{
-            OutputStream os = socket.getOutputStream();
+            OutputStream os = getSocket().getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
             oos.writeObject(user);
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            ObjectInputStream ois = new ObjectInputStream(getSocket().getInputStream());
             Message message = (Message) ois.readObject();
             if(message.getMessageType().equals(MessageType.LOGIN_VALIDATE_SUCCESS)){
                 loginSuccess = true;
             }
-            oos.close();
-            os.close();
+            else{
+                socket.close();
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
         return loginSuccess;
+    }
+
+    public static Socket getSocket() {
+        return socket;
     }
 }

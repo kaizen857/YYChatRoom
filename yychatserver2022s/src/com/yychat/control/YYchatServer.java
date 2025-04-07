@@ -34,6 +34,13 @@ public class YYchatServer {
                 }
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(message);
+                if(message.getMessageType().equals(MessageType.LOGIN_VALIDATE_SUCCESS)){
+                    new ServerReceiverThread(socket).start();
+                    System.out.println("启动线程成功！");
+                }
+                else{
+                    socket.close();
+                }
             }
         }catch(Exception e){
             e.printStackTrace();
