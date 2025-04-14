@@ -4,12 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
 
 public class FriendList extends JFrame {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
-
+    private static String Name;
+    private static HashMap friendChatMap = new HashMap<String,FriendChat>();
     public FriendList(String name){
+        Name = name;
         JPanel friendPanel = new JPanel(new BorderLayout());
         JButton friendButton1 = new JButton("我的好友");
         JButton strangerButton1 = new JButton("陌生人");
@@ -21,14 +24,15 @@ public class FriendList extends JFrame {
         JPanel friendListPanel = new JPanel(new GridLayout(FRIENDCOUNT,1));
         for(int i = 0; i < FRIENDCOUNT; i++){
             ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
-            friendLabel[i] = new JLabel(i + "号好友",icon,JLabel.LEFT);
+            friendLabel[i] = new JLabel(i +"",icon,JLabel.LEFT);
 
             friendLabel[i].addMouseListener(new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
                     if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
                         JLabel label = (JLabel) e.getSource();
                         String friendName = label.getText();
-                        new FriendChat(name,friendName);
+                        FriendChat chat = new FriendChat(name,friendName);
+                        friendChatMap.put(name + "to" + friendName,chat);
                     }
                 }
                 @Override
@@ -101,5 +105,13 @@ public class FriendList extends JFrame {
 
     public static void main(String[] args) {
         FriendList friendList = new FriendList("abc");
+    }
+
+    public static FriendChat getFriendChat(String name){
+        return (FriendChat)friendChatMap.get(name);
+    }
+
+    public static String getUserName(){
+        return Name;
     }
 }

@@ -13,9 +13,9 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 public class FriendChat extends JFrame implements KeyListener {
-    JButton sendButton = new JButton("发送");
+    private JButton sendButton = new JButton("发送");
+    private JTextArea textArea = new JTextArea();
     public FriendChat(String sender,String receiver) {
-        JTextArea textArea = new JTextArea();
         textArea.setForeground(Color.red);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -75,5 +75,8 @@ public class FriendChat extends JFrame implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+    public void append(Message message){
+        textArea.append(message.getSender() + ": " + message.getContent() + "\r\n");
     }
 }

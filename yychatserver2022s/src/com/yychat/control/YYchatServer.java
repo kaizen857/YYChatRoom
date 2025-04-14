@@ -8,10 +8,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class YYchatServer {
-    ServerSocket serverSocket = null;
-    Socket socket = null;
+    private ServerSocket serverSocket = null;
+    private Socket socket = null;
+    private static HashMap userSocket = new HashMap<String,Socket>();
 
     public YYchatServer(){
         try{
@@ -35,6 +37,7 @@ public class YYchatServer {
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(message);
                 if(message.getMessageType().equals(MessageType.LOGIN_VALIDATE_SUCCESS)){
+                    userSocket.put(user.getUserName(),socket);
                     new ServerReceiverThread(socket).start();
                     System.out.println("启动线程成功！");
                 }
@@ -45,5 +48,8 @@ public class YYchatServer {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+    public static Socket getUserSocket(String userName){
+        return (Socket) userSocket.get(userName);
     }
 }

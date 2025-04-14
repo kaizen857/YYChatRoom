@@ -37,4 +37,5 @@ public class Message implements Serializable,MessageType {
     public void setContent(String content) {
         this.content = content;
     }
+
 }

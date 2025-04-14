@@ -1,5 +1,6 @@
 package com.yychat.view;
 
+import com.yychat.control.ShutdownHook;
 import com.yychat.control.YYchatClientConnection;
 import com.yychat.model.User;
 
@@ -77,6 +78,7 @@ public class ClientLogin extends JFrame{
     }
 
     public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new ShutdownHook());
         ClientLogin frame = new ClientLogin();
     }
 }
