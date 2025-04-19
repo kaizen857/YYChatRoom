@@ -3,11 +3,11 @@ package com.yychat.control;
 import com.yychat.model.Message;
 import com.yychat.model.MessageType;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.Set;
 
 public class ServerReceiverThread extends Thread {
     private Socket socket = null;
@@ -29,8 +29,7 @@ public class ServerReceiverThread extends Thread {
                         Socket receiverSocket = YYchatServer.getUserSocket(receiver);
                         System.out.println("接收方" + receiver + "的socket对象" + receiverSocket);
                         if(receiverSocket != null){
-                            ObjectOutputStream out = new ObjectOutputStream(receiverSocket.getOutputStream());
-                            out.writeObject(message);
+                            sendMessage(receiverSocket,message);
                         }
                         else{
                             System.out.println(receiver + "不在线上");
@@ -39,6 +38,20 @@ public class ServerReceiverThread extends Thread {
                     else if(message.getMessageType().equals(MessageType.EXIT)){
                         System.out.println(message.getSender() + "socket关闭");
                         socket.close();
+                    }
+                    else if(message.getMessageType().equals(MessageType.REQUEST_ONLINE_FRIENDS)){
+                        Set<String> onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
+                        Iterator<String> it = onlineFriendSet.iterator();
+                        StringBuilder onlineFriendBuilder = new StringBuilder();
+                        while(it.hasNext()){
+                            onlineFriendBuilder.insert(0, " " + it.next());
+                        }
+                        String onlineFriends = onlineFriendBuilder.toString();
+                        message.setReceiver(message.getSender());
+                        message.setSender("Server");
+                        message.setMessageType(MessageType.RESPONSE_ONLINE_FRIENDS);
+                        message.setContent(onlineFriends);
+                        sendMessage(socket,message);
                     }
                 }
                 else{
@@ -49,5 +62,13 @@ public class ServerReceiverThread extends Thread {
             }
         }
     }
-
+    public void sendMessage(Socket socket,Message message){
+        ObjectOutputStream out = null;
+        try{
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(message);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }

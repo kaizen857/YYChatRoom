@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class YYchatServer {
     private ServerSocket serverSocket = null;
     private Socket socket = null;
-    private static HashMap userSocket = new HashMap<String,Socket>();
+    private static HashMap<String,Socket> userSocketMap = new HashMap<>();
 
     public YYchatServer(){
         try{
@@ -37,7 +37,7 @@ public class YYchatServer {
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(message);
                 if(message.getMessageType().equals(MessageType.LOGIN_VALIDATE_SUCCESS)){
-                    userSocket.put(user.getUserName(),socket);
+                    userSocketMap.put(user.getUserName(),socket);
                     new ServerReceiverThread(socket).start();
                     System.out.println("启动线程成功！");
                 }
@@ -50,6 +50,9 @@ public class YYchatServer {
         }
     }
     public static Socket getUserSocket(String userName){
-        return (Socket) userSocket.get(userName);
+        return (Socket) userSocketMap.get(userName);
+    }
+    public static HashMap<String,Socket> getUserSocketMap(){
+        return userSocketMap;
     }
 }
