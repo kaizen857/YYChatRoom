@@ -31,6 +31,9 @@ public class ClientReceiverThread extends Thread{
                             System.out.println("请打开" + receiver + "to" + sender + "的聊天界面");
                         }
                     }
+                    else if(message.getMessageType().equals(MessageType.RESPONSE_ONLINE_FRIENDS)){
+
+                    }
                 }
                 else{
                     this.interrupt();

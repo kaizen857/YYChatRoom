@@ -6,8 +6,10 @@ import com.yychat.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 
 public class ClientLogin extends JFrame{
+    public static HashMap<String, FriendList> friendListHashMap = new HashMap<String, FriendList>();
     public ClientLogin(){
         JLabel headImage = new JLabel(new ImageIcon("./res/head.gif"));
         this.add(headImage,"North");

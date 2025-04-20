@@ -10,7 +10,7 @@ public class FriendList extends JFrame {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
     private static String Name;
-    private static HashMap friendChatMap = new HashMap<String,FriendChat>();
+    private static HashMap<String, FriendChat> friendChatMap = new HashMap<String,FriendChat>();
     public FriendList(String name){
         Name = name;
         JPanel friendPanel = new JPanel(new BorderLayout());
