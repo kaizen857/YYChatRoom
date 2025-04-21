@@ -10,6 +10,7 @@ public class FriendList extends JFrame {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
     private static String Name;
+    JLabel[] friendLabel = new JLabel[FRIENDCOUNT];
     private static HashMap<String, FriendChat> friendChatMap = new HashMap<String,FriendChat>();
     public FriendList(String name){
         Name = name;
@@ -19,13 +20,16 @@ public class FriendList extends JFrame {
 
         JButton blackListButton1 = new JButton("黑名单");
         friendPanel.add(friendButton1, BorderLayout.NORTH);
-        JLabel[] friendLabel = new JLabel[FRIENDCOUNT];
+
 
         JPanel friendListPanel = new JPanel(new GridLayout(FRIENDCOUNT,1));
         for(int i = 0; i < FRIENDCOUNT; i++){
-            ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
+            //ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
+            ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
             friendLabel[i] = new JLabel(i +"",icon,JLabel.LEFT);
-
+            if(i!=Integer.parseInt(name)){
+                friendLabel[i].setEnabled(false);
+            }
             friendLabel[i].addMouseListener(new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
                     if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
@@ -113,5 +117,15 @@ public class FriendList extends JFrame {
 
     public static String getUserName(){
         return Name;
+    }
+
+    public void activeOnlineFriendIcon(String s){
+        String[] onlineFriendsName = s.split(" ");
+        if(onlineFriendsName.length == 1){
+            return;
+        }
+        for(int i = 0; i < onlineFriendsName.length; i++){
+            friendLabel[Integer.parseInt(onlineFriendsName[i])].setEnabled(true);
+        }
     }
 }

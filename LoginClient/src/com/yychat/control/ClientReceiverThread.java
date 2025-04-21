@@ -2,6 +2,7 @@ package com.yychat.control;
 
 import com.yychat.model.Message;
 import com.yychat.model.MessageType;
+import com.yychat.view.ClientLogin;
 import com.yychat.view.FriendChat;
 import com.yychat.view.FriendList;
 import java.io.ObjectInputStream;
@@ -32,7 +33,10 @@ public class ClientReceiverThread extends Thread{
                         }
                     }
                     else if(message.getMessageType().equals(MessageType.RESPONSE_ONLINE_FRIENDS)){
-
+                        FriendList friendList = (FriendList) ClientLogin.friendListHashMap.get(message.getReceiver());
+                        if(friendList != null){
+                            friendList.activeOnlineFriendIcon(message.getContent());
+                        }
                     }
                 }
                 else{

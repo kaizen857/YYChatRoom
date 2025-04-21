@@ -2,10 +2,13 @@ package com.yychat.view;
 
 import com.yychat.control.ShutdownHook;
 import com.yychat.control.YYchatClientConnection;
+import com.yychat.model.Message;
+import com.yychat.model.MessageType;
 import com.yychat.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 public class ClientLogin extends JFrame{
@@ -56,7 +59,19 @@ public class ClientLogin extends JFrame{
             String password = new String(passwordTextBox.getPassword());
             User user = new User(name, password);
             if(new YYchatClientConnection().loginValidate(user)){
-                new FriendList(name);
+                //new FriendList(name);
+                friendListHashMap.put(name,new FriendList(name));
+                Message message = new Message();
+                message.setSender(name);
+                message.setReceiver("Server");
+                message.setMessageType(MessageType.REQUEST_ONLINE_FRIENDS);
+                ObjectOutputStream out = null;
+                try{
+                    out = new ObjectOutputStream(YYchatClientConnection.getSocket().getOutputStream());
+                    out.writeObject(message);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 this.dispose();
             }
             else{

@@ -44,7 +44,10 @@ public class ServerReceiverThread extends Thread {
                         Iterator<String> it = onlineFriendSet.iterator();
                         StringBuilder onlineFriendBuilder = new StringBuilder();
                         while(it.hasNext()){
-                            onlineFriendBuilder.insert(0, " " + it.next());
+                            onlineFriendBuilder.append(it.next());
+                            if(it.hasNext()){
+                                onlineFriendBuilder.append(" ");
+                            }
                         }
                         String onlineFriends = onlineFriendBuilder.toString();
                         message.setReceiver(message.getSender());
