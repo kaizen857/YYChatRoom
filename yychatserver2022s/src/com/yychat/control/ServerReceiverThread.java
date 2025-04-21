@@ -56,6 +56,17 @@ public class ServerReceiverThread extends Thread {
                         message.setContent(onlineFriends);
                         sendMessage(socket,message);
                     }
+                    else if(message.getMessageType().equals(MessageType.NEW_ONLINE_FRIEND)){
+                        message.setMessageType(MessageType.NEW_ONLINE_TO_ALL_FRIENDS);
+                        Set onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
+                        Iterator<String> it = onlineFriendSet.iterator();
+                        while(it.hasNext()){
+                            String friendName = it.next();
+                            message.setReceiver(friendName);
+                            Socket friendSocket = YYchatServer.getUserSocket(friendName);
+                            sendMessage(friendSocket,message);
+                        }
+                    }
                 }
                 else{
                     this.interrupt();

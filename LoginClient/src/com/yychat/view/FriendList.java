@@ -128,4 +128,7 @@ public class FriendList extends JFrame {
             friendLabel[Integer.parseInt(onlineFriendsName[i])].setEnabled(true);
         }
     }
+    public void activeNewOnlineFriendIcon(String s){
+        this.friendLabel[Integer.parseInt(s)].setEnabled(true);
+    }
 }

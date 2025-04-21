@@ -38,6 +38,14 @@ public class ClientReceiverThread extends Thread{
                             friendList.activeOnlineFriendIcon(message.getContent());
                         }
                     }
+                    else if(message.getMessageType().equals(MessageType.NEW_ONLINE_TO_ALL_FRIENDS)){
+                        String receiver = message.getReceiver();
+                        FriendList friendList = (FriendList) ClientLogin.friendListHashMap.get(receiver);
+                        String sender = message.getSender();
+                        if(friendList != null){
+                            friendList.activeNewOnlineFriendIcon(sender);
+                        }
+                    }
                 }
                 else{
                     this.interrupt();

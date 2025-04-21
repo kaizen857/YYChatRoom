@@ -9,6 +9,7 @@ import com.yychat.model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.HashMap;
 
 public class ClientLogin extends JFrame{
@@ -65,13 +66,9 @@ public class ClientLogin extends JFrame{
                 message.setSender(name);
                 message.setReceiver("Server");
                 message.setMessageType(MessageType.REQUEST_ONLINE_FRIENDS);
-                ObjectOutputStream out = null;
-                try{
-                    out = new ObjectOutputStream(YYchatClientConnection.getSocket().getOutputStream());
-                    out.writeObject(message);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
+                sendMessage(YYchatClientConnection.getSocket(), message);
+                message.setMessageType(MessageType.NEW_ONLINE_FRIEND);
+                sendMessage(YYchatClientConnection.getSocket(), message);
                 this.dispose();
             }
             else{
@@ -92,6 +89,16 @@ public class ClientLogin extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("YY聊天");
         this.setVisible(true);
+    }
+
+    public void sendMessage(Socket socket, Message message){
+        ObjectOutputStream out = null;
+        try{
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(message);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

@@ -7,4 +7,6 @@ public interface MessageType {
     String EXIT = "-1";
     String REQUEST_ONLINE_FRIENDS = "4";
     String RESPONSE_ONLINE_FRIENDS = "5";
+    String NEW_ONLINE_TO_ALL_FRIENDS = "6";
+    String NEW_ONLINE_FRIEND = "7";
 }
