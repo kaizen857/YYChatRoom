@@ -11,6 +11,7 @@ import java.net.Socket;
 
 public class YYchatClientConnection {
     private static Socket socket = null;
+    static private ClientReceiverThread thread = null;
     public YYchatClientConnection(){
 
         try {
@@ -31,7 +32,7 @@ public class YYchatClientConnection {
             Message message = (Message) ois.readObject();
             if(message.getMessageType().equals(MessageType.LOGIN_VALIDATE_SUCCESS)){
                 loginSuccess = true;
-                new ClientReceiverThread(socket).start();
+                thread = new ClientReceiverThread(socket);
             }
             else{
                 socket.close();
@@ -44,5 +45,9 @@ public class YYchatClientConnection {
 
     public static Socket getSocket() {
         return socket;
+    }
+
+    public static ClientReceiverThread getClientReceiverThread() {
+        return thread;
     }
 }
