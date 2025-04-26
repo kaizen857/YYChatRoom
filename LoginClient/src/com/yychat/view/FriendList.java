@@ -120,10 +120,7 @@ public class FriendList extends JFrame {
     }
 
     public void activeOnlineFriendIcon(String s){
-        String[] onlineFriendsName = s.split(" ");
-        if(onlineFriendsName.length == 1){
-            return;
-        }
+        String[] onlineFriendsName = s.split(",");
         for(int i = 0; i < onlineFriendsName.length; i++){
             friendLabel[Integer.parseInt(onlineFriendsName[i])].setEnabled(true);
         }

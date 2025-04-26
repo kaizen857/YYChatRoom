@@ -38,6 +38,7 @@ public class ServerReceiverThread extends Thread {
                     else if(message.getMessageType().equals(MessageType.EXIT)){
                         System.out.println(message.getSender() + "socket关闭");
                         socket.close();
+                        YYchatServer.getUserSocketMap().remove(message.getSender());
                     }
                     else if(message.getMessageType().equals(MessageType.REQUEST_ONLINE_FRIENDS)){
                         Set<String> onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
@@ -46,7 +47,7 @@ public class ServerReceiverThread extends Thread {
                         while(it.hasNext()){
                             onlineFriendBuilder.append(it.next());
                             if(it.hasNext()){
-                                onlineFriendBuilder.append(" ");
+                                onlineFriendBuilder.append(",");
                             }
                         }
                         String onlineFriends = onlineFriendBuilder.toString();

@@ -7,6 +7,7 @@ import com.yychat.view.FriendChat;
 import com.yychat.view.FriendList;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientReceiverThread extends Thread{
     private Socket socket;
@@ -33,14 +34,14 @@ public class ClientReceiverThread extends Thread{
                         }
                     }
                     else if(message.getMessageType().equals(MessageType.RESPONSE_ONLINE_FRIENDS)){
-                        FriendList friendList = (FriendList) ClientLogin.friendListHashMap.get(message.getReceiver());
+                        FriendList friendList = ClientLogin.friendListHashMap.get(message.getReceiver());
                         if(friendList != null){
                             friendList.activeOnlineFriendIcon(message.getContent());
                         }
                     }
                     else if(message.getMessageType().equals(MessageType.NEW_ONLINE_TO_ALL_FRIENDS)){
                         String receiver = message.getReceiver();
-                        FriendList friendList = (FriendList) ClientLogin.friendListHashMap.get(receiver);
+                        FriendList friendList = ClientLogin.friendListHashMap.get(receiver);
                         String sender = message.getSender();
                         if(friendList != null){
                             friendList.activeNewOnlineFriendIcon(sender);
@@ -50,7 +51,16 @@ public class ClientReceiverThread extends Thread{
                 else{
                     this.interrupt();
                 }
-            }catch (Exception e){
+            }
+            catch(SocketException se){
+                if(this.isInterrupted() && socket.isClosed()){
+                    break;
+                }
+                else{
+                    se.printStackTrace();
+                }
+            }
+            catch (Exception e){
                 e.printStackTrace();
             }
         }
