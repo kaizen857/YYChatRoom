@@ -15,7 +15,7 @@ public class ClientReceiverThread extends Thread{
 
     @Override
     public void run() {
-        while(true){
+        while(!this.isInterrupted()){
             try {
                 if(!socket.isClosed()){
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream());

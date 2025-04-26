@@ -12,6 +12,7 @@ public class ShutdownHook extends Thread implements Runnable{
     public void run() {
         System.out.println("ShutdownHook execute start...");
         try {
+            YYchatClientConnection.getClientReceiverThread().interrupt();
             Message message = new Message();
             message.setMessageType(MessageType.EXIT);
             message.setSender(FriendList.getUserName());
