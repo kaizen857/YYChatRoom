@@ -27,9 +27,9 @@ public class FriendList extends JFrame {
             //ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
             ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
             friendLabel[i] = new JLabel(i +"",icon,JLabel.LEFT);
-            if(i!=Integer.parseInt(name)){
+//            if(i!=Integer.parseInt(name)){
                 friendLabel[i].setEnabled(false);
-            }
+            //}
             friendLabel[i].addMouseListener(new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
                     if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
@@ -121,11 +121,11 @@ public class FriendList extends JFrame {
 
     public void activeOnlineFriendIcon(String s){
         String[] onlineFriendsName = s.split(",");
-        for(int i = 0; i < onlineFriendsName.length; i++){
-            friendLabel[Integer.parseInt(onlineFriendsName[i])].setEnabled(true);
-        }
+//        for(int i = 0; i < onlineFriendsName.length; i++){
+//            friendLabel[Integer.parseInt(onlineFriendsName[i])].setEnabled(true);
+//        }
     }
     public void activeNewOnlineFriendIcon(String s){
-        this.friendLabel[Integer.parseInt(s)].setEnabled(true);
+//        this.friendLabel[Integer.parseInt(s)].setEnabled(true);
     }
 }
