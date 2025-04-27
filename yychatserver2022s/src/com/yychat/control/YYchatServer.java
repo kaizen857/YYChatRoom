@@ -31,23 +31,9 @@ public class YYchatServer {
                 User user = (User) in.readObject();
                 System.out.println("登录信息:\r\nuserName:" + user.getUserName()+",password:"+user.getPassword());
                 Message message = new Message();
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                String db_url = "jdbc:mysql://localhost:3306/yychat2022s?useUnicode=true&characterEncoding=utf-8";
-                String db_user = "root";
-                String db_pwd = "Xwl20050219";
-                Connection conn;
-                boolean loginSuccess = false;
-                try{
-                    conn = DriverManager.getConnection(db_url, db_user, db_pwd);
-                    String query = "select * from user where username=? and password=?";
-                    PreparedStatement ps = conn.prepareStatement(query);
-                    ps.setString(1,user.getUserName());
-                    ps.setString(2,user.getPassword());
-                    ResultSet rs = ps.executeQuery();
-                    loginSuccess = rs.next();
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
+
+                boolean loginSuccess = DBUtil.loginValidate(user.getUserName(), user.getPassword());
+
                 if(loginSuccess){
                     System.out.println("密码验证通过!");
                     message.setMessageType(MessageType.LOGIN_VALIDATE_SUCCESS);
