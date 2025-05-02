@@ -1,5 +1,7 @@
 package com.yychat.control;
 
+import com.yychat.model.User;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -36,5 +38,36 @@ public class DBUtil {
             e.printStackTrace();
         }
         return loginSuccess;
+    }
+
+    public static boolean hasUser(User user){
+        boolean hasUser = false;
+        String query = "select * from user where username=?";
+        PreparedStatement statement = null;
+        try{
+            statement = dataBase.prepareStatement(query);
+            statement.setString(1, user.getUserName());
+            ResultSet rs = statement.executeQuery();
+            hasUser = rs.next();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return hasUser;
+    }
+
+    //添加新用户
+    public static int addNewUser(User user){
+        int result = -1;
+        String insert = "insert into user(username,password) values(?,?)";
+        PreparedStatement statement;
+        try{
+            statement = dataBase.prepareStatement(insert);
+            statement.setString(1, user.getUserName());
+            statement.setString(2, user.getPassword());
+            result = statement.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
     }
 }

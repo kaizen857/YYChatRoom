@@ -75,6 +75,18 @@ public class ClientLogin extends JFrame{
                 JOptionPane.showMessageDialog(this,"密码错误！请重新登录！");
             }
         });
+
+        registerButton.addActionListener(event -> {
+            String name = numberTextBox.getText();
+            String password = new String(passwordTextBox.getPassword());
+            User user = new User(name, password);
+            if(new YYchatClientConnection().userSignup(user)){
+                JOptionPane.showMessageDialog(this,name + "注册成功！");
+            }
+            else{
+                JOptionPane.showMessageDialog(this,name + "注册失败！");
+            }
+        });
         buttonPanel.add(loginButton);
         buttonPanel.add(registerButton);
         buttonPanel.add(cancelButton);

@@ -9,4 +9,8 @@ public interface MessageType {
     String RESPONSE_ONLINE_FRIENDS = "5";   //请求在线好友的回应
     String NEW_ONLINE_TO_ALL_FRIENDS = "6"; //服务器广播给所有在线好友
     String NEW_ONLINE_FRIEND = "7";         //通知服务器新好友上线
+    String USER_SIGNUP_REQUEST = "8";       //注册新用户请求
+    String USER_SIGNUP_SUCCESS = "9";       //注册成功
+    String USER_SIGNUP_FAILURE = "10";      //注册失败
+    String USER_LOGIN_REQUEST = "11";       //登录请求
 }

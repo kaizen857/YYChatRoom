@@ -27,9 +27,9 @@ public class FriendList extends JFrame {
             //ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
             ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
             friendLabel[i] = new JLabel(i +"",icon,JLabel.LEFT);
-//            if(i!=Integer.parseInt(name)){
+            if(!Integer.toString(i).equals(Name)){
                 friendLabel[i].setEnabled(false);
-            //}
+            }
             friendLabel[i].addMouseListener(new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
                     if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
