@@ -1,5 +1,6 @@
 package com.yychat.view;
 
+import com.yychat.control.ClientReceiverThread;
 import com.yychat.control.ShutdownHook;
 import com.yychat.control.YYchatClientConnection;
 import com.yychat.model.Message;
@@ -8,12 +9,14 @@ import com.yychat.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
 public class ClientLogin extends JFrame{
     public static HashMap<String, FriendList> friendListHashMap = new HashMap<String, FriendList>();
+    private static ClientReceiverThread thread = null;
     public ClientLogin(){
         JLabel headImage = new JLabel(new ImageIcon("./res/head.gif"));
         this.add(headImage,"North");
@@ -55,16 +58,31 @@ public class ClientLogin extends JFrame{
         JButton cancelButton = new JButton(new ImageIcon("./res/cancel.jpg"));
         JPanel buttonPanel = new JPanel();
 
+        //登录
         loginButton.addActionListener(event -> {
             String name = numberTextBox.getText();
             String password = new String(passwordTextBox.getPassword());
             User user = new User(name, password);
             if(new YYchatClientConnection().loginValidate(user)){
-                //new FriendList(name);
-                friendListHashMap.put(name,new FriendList(name));
                 Message message = new Message();
                 message.setSender(name);
                 message.setReceiver("Server");
+
+                message.setMessageType(MessageType.REQUEST_FRIEND_LIST);
+                sendMessage(YYchatClientConnection.getSocket(), message);
+                String friendListName = null;
+                try{
+                    ObjectInputStream in = new ObjectInputStream(YYchatClientConnection.getSocket().getInputStream());
+                    Message tmp = (Message) in.readObject();
+                    friendListName = tmp.getContent();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                friendListHashMap.put(name,new FriendList(name,friendListName));
+
+
+                thread = new ClientReceiverThread(YYchatClientConnection.getSocket());
+                thread.start();
                 message.setMessageType(MessageType.REQUEST_ONLINE_FRIENDS);
                 sendMessage(YYchatClientConnection.getSocket(), message);
                 message.setMessageType(MessageType.NEW_ONLINE_FRIEND);
@@ -103,7 +121,7 @@ public class ClientLogin extends JFrame{
         this.setVisible(true);
     }
 
-    public void sendMessage(Socket socket, Message message){
+    private void sendMessage(Socket socket, Message message){
         ObjectOutputStream out = null;
         try{
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -111,6 +129,10 @@ public class ClientLogin extends JFrame{
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public static ClientReceiverThread getClientReceiverThread() {
+        return thread;
     }
 
     public static void main(String[] args) {

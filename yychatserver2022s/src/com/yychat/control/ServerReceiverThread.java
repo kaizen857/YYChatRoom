@@ -20,52 +20,60 @@ public class ServerReceiverThread extends Thread {
                 if(!socket.isClosed()){
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                     Message message = (Message) in.readObject();
-                    if(message.getMessageType().equals(MessageType.COMMON_CHAT_MESSAGE)){
-                        System.out.println(message.getSender()
-                                +"对"+message.getReceiver()
-                                +"说："+message.getContent());
-                        String receiver = message.getReceiver();
-                        String content = message.getContent();
-                        Socket receiverSocket = YYchatServer.getUserSocket(receiver);
-                        System.out.println("接收方" + receiver + "的socket对象" + receiverSocket);
-                        if(receiverSocket != null){
-                            sendMessage(receiverSocket,message);
-                        }
-                        else{
-                            System.out.println(receiver + "不在线上");
-                        }
-                    }
-                    else if(message.getMessageType().equals(MessageType.EXIT)){
-                        System.out.println(message.getSender() + "socket关闭");
-                        socket.close();
-                        YYchatServer.getUserSocketMap().remove(message.getSender());
-                    }
-                    else if(message.getMessageType().equals(MessageType.REQUEST_ONLINE_FRIENDS)){
-                        Set<String> onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
-                        Iterator<String> it = onlineFriendSet.iterator();
-                        StringBuilder onlineFriendBuilder = new StringBuilder();
-                        while(it.hasNext()){
-                            onlineFriendBuilder.append(it.next());
-                            if(it.hasNext()){
-                                onlineFriendBuilder.append(",");
+                    switch (message.getMessageType()) {
+                        case MessageType.COMMON_CHAT_MESSAGE -> {
+                            System.out.println(message.getSender()
+                                    + "对" + message.getReceiver()
+                                    + "说：" + message.getContent());
+                            String receiver = message.getReceiver();
+                            String content = message.getContent();
+                            Socket receiverSocket = YYchatServer.getUserSocket(receiver);
+                            System.out.println("接收方" + receiver + "的socket对象" + receiverSocket);
+                            if (receiverSocket != null) {
+                                sendMessage(receiverSocket, message);
+                            } else {
+                                System.out.println(receiver + "不在线上");
                             }
                         }
-                        String onlineFriends = onlineFriendBuilder.toString();
-                        message.setReceiver(message.getSender());
-                        message.setSender("Server");
-                        message.setMessageType(MessageType.RESPONSE_ONLINE_FRIENDS);
-                        message.setContent(onlineFriends);
-                        sendMessage(socket,message);
-                    }
-                    else if(message.getMessageType().equals(MessageType.NEW_ONLINE_FRIEND)){
-                        message.setMessageType(MessageType.NEW_ONLINE_TO_ALL_FRIENDS);
-                        Set onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
-                        Iterator<String> it = onlineFriendSet.iterator();
-                        while(it.hasNext()){
-                            String friendName = it.next();
-                            message.setReceiver(friendName);
-                            Socket friendSocket = YYchatServer.getUserSocket(friendName);
-                            sendMessage(friendSocket,message);
+                        case MessageType.EXIT -> {
+                            System.out.println(message.getSender() + "socket关闭");
+                            socket.close();
+                            YYchatServer.getUserSocketMap().remove(message.getSender());
+                        }
+                        case MessageType.REQUEST_ONLINE_FRIENDS -> {
+                            Set<String> onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
+                            Iterator<String> it = onlineFriendSet.iterator();
+                            StringBuilder onlineFriendBuilder = new StringBuilder();
+                            while (it.hasNext()) {
+                                onlineFriendBuilder.append(it.next());
+                                if (it.hasNext()) {
+                                    onlineFriendBuilder.append(",");
+                                }
+                            }
+                            String onlineFriends = onlineFriendBuilder.toString();
+                            message.setReceiver(message.getSender());
+                            message.setSender("Server");
+                            message.setMessageType(MessageType.RESPONSE_ONLINE_FRIENDS);
+                            message.setContent(onlineFriends);
+                            sendMessage(socket, message);
+                        }
+                        case MessageType.NEW_ONLINE_FRIEND -> {
+                            message.setMessageType(MessageType.NEW_ONLINE_TO_ALL_FRIENDS);
+                            Set onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
+                            Iterator<String> it = onlineFriendSet.iterator();
+                            while (it.hasNext()) {
+                                String friendName = it.next();
+                                message.setReceiver(friendName);
+                                Socket friendSocket = YYchatServer.getUserSocket(friendName);
+                                sendMessage(friendSocket, message);
+                            }
+                        }
+                        case MessageType.REQUEST_FRIEND_LIST -> {
+                            message.setContent(DBUtil.getAllFriends(message.getSender(),1));
+                            message.setMessageType(MessageType.RESPONSE_FRIEND_LIST);
+                            message.setReceiver(message.getSender());
+                            message.setSender("Server");
+                            sendMessage(socket, message);
                         }
                     }
                 }

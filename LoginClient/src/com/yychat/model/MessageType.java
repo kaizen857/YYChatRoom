@@ -13,4 +13,6 @@ public interface MessageType {
     String USER_SIGNUP_SUCCESS = "9";       //注册成功
     String USER_SIGNUP_FAILURE = "10";      //注册失败
     String USER_LOGIN_REQUEST = "11";       //登录请求
+    String REQUEST_FRIEND_LIST = "12";
+    String RESPONSE_FRIEND_LIST = "13";
 }

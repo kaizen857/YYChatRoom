@@ -37,8 +37,6 @@ public class YYchatClientConnection {
             message = (Message) ois.readObject();
             if(message.getMessageType().equals(MessageType.LOGIN_VALIDATE_SUCCESS)){
                 loginSuccess = true;
-                thread = new ClientReceiverThread(socket);
-                thread.start();
             }
             else{
                 socket.close();
@@ -76,7 +74,5 @@ public class YYchatClientConnection {
         return socket;
     }
 
-    public static ClientReceiverThread getClientReceiverThread() {
-        return thread;
-    }
+
 }

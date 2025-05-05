@@ -12,7 +12,7 @@ public class FriendList extends JFrame {
     private static String Name;
     JLabel[] friendLabel = new JLabel[FRIENDCOUNT];
     private static HashMap<String, FriendChat> friendChatMap = new HashMap<String,FriendChat>();
-    public FriendList(String name){
+    public FriendList(String name,String friendListName){
         Name = name;
         JPanel friendPanel = new JPanel(new BorderLayout());
         JButton friendButton1 = new JButton("我的好友");
@@ -22,14 +22,24 @@ public class FriendList extends JFrame {
         friendPanel.add(friendButton1, BorderLayout.NORTH);
 
 
-        JPanel friendListPanel = new JPanel(new GridLayout(FRIENDCOUNT,1));
-        for(int i = 0; i < FRIENDCOUNT; i++){
-            //ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
+//        JPanel friendListPanel = new JPanel(new GridLayout(FRIENDCOUNT,1));
+//        for(int i = 0; i < FRIENDCOUNT; i++){
+//            //ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
+//            ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
+//            friendLabel[i] = new JLabel(i +"",icon,JLabel.LEFT);
+//            if(!Integer.toString(i).equals(Name)){
+//                friendLabel[i].setEnabled(false);
+//            }
+//
+//
+//            friendListPanel.add(friendLabel[i]);
+//        }
+        String[] friendList = friendListName.split(" ");
+        JPanel friendListPanel = new JPanel(new GridLayout(friendList.length,1));
+        for(int i=0;i<friendList.length;i++){
             ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
-            friendLabel[i] = new JLabel(i +"",icon,JLabel.LEFT);
-            if(!Integer.toString(i).equals(Name)){
-                friendLabel[i].setEnabled(false);
-            }
+            friendLabel[i] = new JLabel(friendList[i],icon,JLabel.LEFT);
+
             friendLabel[i].addMouseListener(new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
                     if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
@@ -58,7 +68,6 @@ public class FriendList extends JFrame {
                     }
                 }
             });
-
             friendListPanel.add(friendLabel[i]);
         }
 
@@ -108,7 +117,7 @@ public class FriendList extends JFrame {
     }
 
     public static void main(String[] args) {
-        FriendList friendList = new FriendList("abc");
+        FriendList friendList = new FriendList("abc"," ");
     }
 
     public static FriendChat getFriendChat(String name){
@@ -129,3 +138,8 @@ public class FriendList extends JFrame {
 //        this.friendLabel[Integer.parseInt(s)].setEnabled(true);
     }
 }
+
+
+/*
+
+ */

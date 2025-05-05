@@ -70,4 +70,25 @@ public class DBUtil {
         }
         return result;
     }
+
+    public static String getAllFriends(String userName,int friendType){
+        StringBuilder builder = new StringBuilder();
+        String query = "select slaveUser from userRelation where masterUser=? and relation=?";
+        PreparedStatement statement = null;
+        try{
+            statement = dataBase.prepareStatement(query);
+            statement.setString(1, userName);
+            statement.setInt(2, friendType);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                builder.append(rs.getString(1));
+                builder.append(" ");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String result = builder.toString();
+        System.out.println(userName + "全部好友:" + result);
+        return result;
+    }
 }
