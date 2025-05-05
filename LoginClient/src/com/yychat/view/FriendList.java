@@ -10,7 +10,7 @@ public class FriendList extends JFrame {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
     private static String Name;
-    JLabel[] friendLabel = new JLabel[FRIENDCOUNT];
+    JLabel[] friendLabel;
     private static HashMap<String, FriendChat> friendChatMap = new HashMap<String,FriendChat>();
     public FriendList(String name,String friendListName){
         Name = name;
@@ -36,10 +36,13 @@ public class FriendList extends JFrame {
 //        }
         String[] friendList = friendListName.split(" ");
         JPanel friendListPanel = new JPanel(new GridLayout(friendList.length,1));
+        friendLabel = new JLabel[friendList.length];
         for(int i=0;i<friendList.length;i++){
             ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
             friendLabel[i] = new JLabel(friendList[i],icon,JLabel.LEFT);
-
+            if(!friendLabel[i].getText().equals(name)){
+                friendLabel[i].setEnabled(false);
+            }
             friendLabel[i].addMouseListener(new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
                     if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
@@ -129,13 +132,21 @@ public class FriendList extends JFrame {
     }
 
     public void activeOnlineFriendIcon(String s){
-        String[] onlineFriendsName = s.split(",");
-//        for(int i = 0; i < onlineFriendsName.length; i++){
-//            friendLabel[Integer.parseInt(onlineFriendsName[i])].setEnabled(true);
-//        }
+        String[] onlineFriendsName = s.split(" ");
+        for(int i = 0; i < onlineFriendsName.length; i++){
+            for(int j = 0; j < friendLabel.length; j++){
+                if(friendLabel[j].getText().equals(onlineFriendsName[i])){
+                    friendLabel[j].setEnabled(true);
+                }
+            }
+        }
     }
     public void activeNewOnlineFriendIcon(String s){
-//        this.friendLabel[Integer.parseInt(s)].setEnabled(true);
+        for(int i = 0; i < friendLabel.length; i++){
+            if(friendLabel[i].getText().equals(s)){
+                friendLabel[i].setEnabled(true);
+            }
+        }
     }
 }
 
