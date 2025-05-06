@@ -13,6 +13,10 @@ public interface MessageType {
     String USER_SIGNUP_SUCCESS = "9";       //注册成功
     String USER_SIGNUP_FAILURE = "10";      //注册失败
     String USER_LOGIN_REQUEST = "11";       //登录请求
-    String REQUEST_FRIEND_LIST = "12";
-    String RESPONSE_FRIEND_LIST = "13";
+    String REQUEST_FRIEND_LIST = "12";      //请求当前用户的好友列表
+    String RESPONSE_FRIEND_LIST = "13";     //对请求好友列表的回应
+    String USER_ADD_NEW_FRIEND = "14";
+    String RESPONSE_USER_ADD_NEW_FRIEND = "15";
+    String USER_ADD_NEW_FRIEND_FAILURE_NO_USER = "16";
+    String USER_ADD_NEW_FRIEND_FAILURE_ALREADY_FRIEND = "17";
 }

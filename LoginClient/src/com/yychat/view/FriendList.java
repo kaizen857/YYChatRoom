@@ -1,39 +1,70 @@
 package com.yychat.view;
 
+import com.yychat.control.YYchatClientConnection;
+import com.yychat.model.Message;
+import com.yychat.model.MessageType;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 public class FriendList extends JFrame {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
     private static String Name;
+    private boolean hasACKFromServer = false;
     JLabel[] friendLabel;
     private static HashMap<String, FriendChat> friendChatMap = new HashMap<String,FriendChat>();
     public FriendList(String name,String friendListName){
         Name = name;
         JPanel friendPanel = new JPanel(new BorderLayout());
+        JPanel addFriendPanel = new JPanel(new GridLayout(2,1));
         JButton friendButton1 = new JButton("我的好友");
         JButton strangerButton1 = new JButton("陌生人");
+        JButton addFriendButton = new JButton("添加好友");
+
+        addFriendButton.addActionListener(e->{
+            String newFriendName = JOptionPane.showInputDialog("请输入新好友的名字：");
+            System.out.println("new friend:" + newFriendName);
+            if(newFriendName != null){
+                Message message = new Message();
+                message.setSender(Name);
+                message.setReceiver("Server");
+                message.setContent(newFriendName);
+                message.setMessageType(MessageType.USER_ADD_NEW_FRIEND);
+                try{
+                    ObjectOutputStream out = new ObjectOutputStream(YYchatClientConnection.getSocket().getOutputStream());
+                    out.writeObject(message);
+                    long startTime = System.currentTimeMillis();
+                    boolean flag = true;
+                    while(!hasACKFromServer){
+                        long currentTime = System.currentTimeMillis();
+                        if(currentTime - startTime > 2000){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if(flag){
+                        JOptionPane.showMessageDialog(this,"添加成功！");
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(this,"服务器响应超时！");
+                    }
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        addFriendPanel.add(addFriendButton);
+        addFriendPanel.add(friendButton1);
 
         JButton blackListButton1 = new JButton("黑名单");
-        friendPanel.add(friendButton1, BorderLayout.NORTH);
+        friendPanel.add(addFriendPanel, BorderLayout.NORTH);
 
-
-//        JPanel friendListPanel = new JPanel(new GridLayout(FRIENDCOUNT,1));
-//        for(int i = 0; i < FRIENDCOUNT; i++){
-//            //ImageIcon icon = new ImageIcon("./res/" + (int) (Math.random() * 6) + ".jpg");
-//            ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
-//            friendLabel[i] = new JLabel(i +"",icon,JLabel.LEFT);
-//            if(!Integer.toString(i).equals(Name)){
-//                friendLabel[i].setEnabled(false);
-//            }
-//
-//
-//            friendListPanel.add(friendLabel[i]);
-//        }
         String[] friendList = friendListName.split(" ");
         JPanel friendListPanel = new JPanel(new GridLayout(friendList.length,1));
         friendLabel = new JLabel[friendList.length];
@@ -147,6 +178,13 @@ public class FriendList extends JFrame {
                 friendLabel[i].setEnabled(true);
             }
         }
+    }
+    private void showAllFriends(String s){
+
+    }
+
+    public void setHasACKFromServer(boolean hasACKFromServer) {
+        this.hasACKFromServer = hasACKFromServer;
     }
 }
 

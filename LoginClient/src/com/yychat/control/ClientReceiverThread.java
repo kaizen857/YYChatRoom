@@ -22,29 +22,37 @@ public class ClientReceiverThread extends Thread{
                 if(!socket.isClosed()){
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                     Message message = (Message) in.readObject();
-                    if(message.getMessageType().equals(MessageType.COMMON_CHAT_MESSAGE)){
-                        String receiver = message.getReceiver();
-                        String sender = message.getSender();
-                        FriendChat chat = FriendList.getFriendChat(receiver + "to" + sender);
-                        if(chat != null){
-                            chat.append(message);
+                    switch (message.getMessageType()) {
+                        case MessageType.COMMON_CHAT_MESSAGE -> {
+                            String receiver = message.getReceiver();
+                            String sender = message.getSender();
+                            FriendChat chat = FriendList.getFriendChat(receiver + "to" + sender);
+                            if (chat != null) {
+                                chat.append(message);
+                            } else {
+                                System.out.println("请打开" + receiver + "to" + sender + "的聊天界面");
+                            }
                         }
-                        else{
-                            System.out.println("请打开" + receiver + "to" + sender + "的聊天界面");
+                        case MessageType.RESPONSE_ONLINE_FRIENDS -> {
+                            FriendList friendList = ClientLogin.friendListHashMap.get(message.getReceiver());
+                            if (friendList != null) {
+                                friendList.activeOnlineFriendIcon(message.getContent());
+                            }
                         }
-                    }
-                    else if(message.getMessageType().equals(MessageType.RESPONSE_ONLINE_FRIENDS)){
-                        FriendList friendList = ClientLogin.friendListHashMap.get(message.getReceiver());
-                        if(friendList != null){
-                            friendList.activeOnlineFriendIcon(message.getContent());
+                        case MessageType.NEW_ONLINE_TO_ALL_FRIENDS -> {
+                            String receiver = message.getReceiver();
+                            FriendList friendList = ClientLogin.friendListHashMap.get(receiver);
+                            String sender = message.getSender();
+                            if (friendList != null) {
+                                friendList.activeNewOnlineFriendIcon(sender);
+                            }
                         }
-                    }
-                    else if(message.getMessageType().equals(MessageType.NEW_ONLINE_TO_ALL_FRIENDS)){
-                        String receiver = message.getReceiver();
-                        FriendList friendList = ClientLogin.friendListHashMap.get(receiver);
-                        String sender = message.getSender();
-                        if(friendList != null){
-                            friendList.activeNewOnlineFriendIcon(sender);
+                        case MessageType.RESPONSE_USER_ADD_NEW_FRIEND -> {
+                            String receiver = message.getReceiver();
+                            FriendList friendList = ClientLogin.friendListHashMap.get(receiver);
+                            if (friendList != null) {
+                                friendList.setHasACKFromServer(true);
+                            }
                         }
                     }
                 }

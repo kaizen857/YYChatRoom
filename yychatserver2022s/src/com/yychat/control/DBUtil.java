@@ -91,4 +91,20 @@ public class DBUtil {
         System.out.println(userName + "全部好友:" + result);
         return result;
     }
+
+    public static int insertIntoFriend(String user,String friendOfUser,int friendType){
+        int count = 0;
+        String query = "insert into userRelation(masterUser,slaveUser,relation) values(?,?,?)";
+        PreparedStatement statement = null;
+        try {
+            statement = dataBase.prepareStatement(query);
+            statement.setString(1, user);
+            statement.setString(2, friendOfUser);
+            statement.setInt(3, friendType);
+            count = statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 }

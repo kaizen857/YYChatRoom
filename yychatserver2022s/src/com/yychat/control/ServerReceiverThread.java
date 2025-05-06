@@ -75,6 +75,9 @@ public class ServerReceiverThread extends Thread {
                             message.setSender("Server");
                             sendMessage(socket, message);
                         }
+                        case MessageType.USER_ADD_NEW_FRIEND -> {
+
+                        }
                     }
                 }
                 else{
