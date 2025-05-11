@@ -5,6 +5,8 @@ import com.yychat.model.MessageType;
 import com.yychat.view.ClientLogin;
 import com.yychat.view.FriendChat;
 import com.yychat.view.FriendList;
+
+import javax.swing.*;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
@@ -47,11 +49,26 @@ public class ClientReceiverThread extends Thread{
                                 friendList.activeNewOnlineFriendIcon(sender);
                             }
                         }
-                        case MessageType.RESPONSE_USER_ADD_NEW_FRIEND -> {
+                        case MessageType.USER_ADD_NEW_FRIEND_SUCCESS -> {
                             String receiver = message.getReceiver();
                             FriendList friendList = ClientLogin.friendListHashMap.get(receiver);
                             if (friendList != null) {
-                                friendList.setHasACKFromServer(true);
+                                JOptionPane.showMessageDialog(null,"添加成功！");
+                                friendList.addNewFriend(message.getContent());
+                            }
+                        }
+                        case MessageType.USER_ADD_NEW_FRIEND_FAILURE_ALREADY_FRIEND -> {
+                            String receiver = message.getReceiver();
+                            FriendList friendList = ClientLogin.friendListHashMap.get(receiver);
+                            if (friendList != null) {
+                                JOptionPane.showMessageDialog(null,"添加失败！该用户已经是你的朋友！");
+                            }
+                        }
+                        case MessageType.USER_ADD_NEW_FRIEND_FAILURE_NO_USER -> {
+                            String receiver = message.getReceiver();
+                            FriendList friendList = ClientLogin.friendListHashMap.get(receiver);
+                            if (friendList != null) {
+                                JOptionPane.showMessageDialog(null,"添加失败！没有该用户");
                             }
                         }
                     }

@@ -51,7 +51,7 @@ public class YYchatServer {
                 //注册请求
                 else if(message.getMessageType().equals(MessageType.USER_SIGNUP_REQUEST)){
                     int singupSuccess = -1;
-                    if(DBUtil.hasUser(user)){
+                    if(DBUtil.hasUser(user.getUserName())){
                         //当前用户名已存在
                         System.out.println("当前用户名已被注册！");
                     }

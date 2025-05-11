@@ -15,8 +15,8 @@ public class FriendList extends JFrame {
     final int FRIENDCOUNT = 50;
     final int STRANGERCOUNT = 20;
     private static String Name;
-    private boolean hasACKFromServer = false;
     JLabel[] friendLabel;
+    JPanel friendListPanel = null;
     private static HashMap<String, FriendChat> friendChatMap = new HashMap<String,FriendChat>();
     public FriendList(String name,String friendListName){
         Name = name;
@@ -38,21 +38,33 @@ public class FriendList extends JFrame {
                 try{
                     ObjectOutputStream out = new ObjectOutputStream(YYchatClientConnection.getSocket().getOutputStream());
                     out.writeObject(message);
-                    long startTime = System.currentTimeMillis();
-                    boolean flag = true;
-                    while(!hasACKFromServer){
-                        long currentTime = System.currentTimeMillis();
-                        if(currentTime - startTime > 2000){
-                            flag = false;
-                            break;
-                        }
-                    }
-                    if(flag){
-                        JOptionPane.showMessageDialog(this,"添加成功！");
-                    }
-                    else{
-                        JOptionPane.showMessageDialog(this,"服务器响应超时！");
-                    }
+//                    long startTime = System.currentTimeMillis();
+//                    boolean flag = true;
+//                    while(ACKFromServer.equals("-1")){
+//                        long currentTime = System.currentTimeMillis();
+//                        if(currentTime - startTime > 10000){
+//                            flag = false;
+//                            break;
+//                        }
+//
+//                    }
+//                    if(flag){
+//                        switch (ACKFromServer){
+//                            case MessageType.USER_ADD_NEW_FRIEND_SUCCESS -> {
+//                                JOptionPane.showMessageDialog(this,"添加成功！");
+//                                this.addNewFriend(newFriendName);
+//                            }
+//                            case MessageType.USER_ADD_NEW_FRIEND_FAILURE_NO_USER -> {
+//                                JOptionPane.showMessageDialog(this,"添加失败！没有该用户");
+//                            }
+//                            case MessageType.USER_ADD_NEW_FRIEND_FAILURE_ALREADY_FRIEND -> {
+//                                JOptionPane.showMessageDialog(this,"添加失败！该用户已经是你的朋友！");
+//                            }
+//                        }
+//                    }
+//                    else{
+//                        JOptionPane.showMessageDialog(this,"服务器响应超时！");
+//                    }
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }
@@ -66,43 +78,42 @@ public class FriendList extends JFrame {
         friendPanel.add(addFriendPanel, BorderLayout.NORTH);
 
         String[] friendList = friendListName.split(" ");
-        JPanel friendListPanel = new JPanel(new GridLayout(friendList.length,1));
+        friendListPanel = new JPanel(new GridLayout(0,1));//friendList.length
         friendLabel = new JLabel[friendList.length];
         for(int i=0;i<friendList.length;i++){
-            ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
-            friendLabel[i] = new JLabel(friendList[i],icon,JLabel.LEFT);
-            if(!friendLabel[i].getText().equals(name)){
-                friendLabel[i].setEnabled(false);
+            if(friendList[i] != null){
+                ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
+                friendLabel[i] = new JLabel(friendList[i],icon,JLabel.LEFT);
+                if(!friendLabel[i].getText().equals(name)){
+                    friendLabel[i].setEnabled(false);
+                }
+                friendLabel[i].addMouseListener(new MouseListener() {
+                    public void mouseClicked(MouseEvent e) {
+                        if(e.getClickCount() ==2 && e.getSource() instanceof JLabel label){
+                            String friendName = label.getText();
+                            FriendChat chat = new FriendChat(name,friendName);
+                            friendChatMap.put(name + "to" + friendName,chat);
+                        }
+                    }
+                    @Override
+                    public void mousePressed(MouseEvent e) {}
+                    @Override
+                    public void mouseReleased(MouseEvent e) {}
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        if(e.getSource() instanceof JLabel label){
+                            label.setForeground(Color.red);
+                        }
+                    }
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        if(e.getSource() instanceof JLabel label){
+                            label.setForeground(Color.black);
+                        }
+                    }
+                });
+                friendListPanel.add(friendLabel[i]);
             }
-            friendLabel[i].addMouseListener(new MouseListener() {
-                public void mouseClicked(MouseEvent e) {
-                    if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
-                        JLabel label = (JLabel) e.getSource();
-                        String friendName = label.getText();
-                        FriendChat chat = new FriendChat(name,friendName);
-                        friendChatMap.put(name + "to" + friendName,chat);
-                    }
-                }
-                @Override
-                public void mousePressed(MouseEvent e) {}
-                @Override
-                public void mouseReleased(MouseEvent e) {}
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    if(e.getSource() instanceof JLabel){
-                        JLabel label = (JLabel) e.getSource();
-                        label.setForeground(Color.red);
-                    }
-                }
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    if(e.getSource() instanceof JLabel){
-                        JLabel label = (JLabel) e.getSource();
-                        label.setForeground(Color.black);
-                    }
-                }
-            });
-            friendListPanel.add(friendLabel[i]);
         }
 
         JScrollPane friendListScrollPane = new JScrollPane(friendListPanel);
@@ -179,12 +190,43 @@ public class FriendList extends JFrame {
             }
         }
     }
-    private void showAllFriends(String s){
 
-    }
+    public void addNewFriend(String friendName){
+        ImageIcon icon = new ImageIcon("res/"+ 2 +".jpg");
+        JLabel label = new JLabel(friendName,icon,JLabel.LEFT);
+        label.setEnabled(false);
+        label.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount() ==2 && e.getSource() instanceof JLabel){
+                    JLabel label = (JLabel) e.getSource();
+                    String friendName = label.getText();
+                    FriendChat chat = new FriendChat(Name,friendName);
+                    friendChatMap.put(Name + "to" + friendName,chat);
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if(e.getSource() instanceof JLabel){
+                    JLabel label = (JLabel) e.getSource();
+                    label.setForeground(Color.red);
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if(e.getSource() instanceof JLabel){
+                    JLabel label = (JLabel) e.getSource();
+                    label.setForeground(Color.black);
+                }
+            }
+        });
 
-    public void setHasACKFromServer(boolean hasACKFromServer) {
-        this.hasACKFromServer = hasACKFromServer;
+        friendListPanel.add(label);
+        friendListPanel.revalidate();
+        friendListPanel.repaint();
     }
 }
 

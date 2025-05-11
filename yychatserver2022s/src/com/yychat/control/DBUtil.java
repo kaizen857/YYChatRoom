@@ -40,13 +40,13 @@ public class DBUtil {
         return loginSuccess;
     }
 
-    public static boolean hasUser(User user){
+    public static boolean hasUser(String user){
         boolean hasUser = false;
         String query = "select * from user where username=?";
         PreparedStatement statement = null;
         try{
             statement = dataBase.prepareStatement(query);
-            statement.setString(1, user.getUserName());
+            statement.setString(1, user);
             ResultSet rs = statement.executeQuery();
             hasUser = rs.next();
         }catch (Exception e){
@@ -89,6 +89,23 @@ public class DBUtil {
         }
         String result = builder.toString();
         System.out.println(userName + "全部好友:" + result);
+        return result;
+    }
+
+    public static boolean isUsersFriend(String userName,String userFriend,int friendType){
+        boolean result = false;
+        String query = "select * from userRelation where masterUser=? and slaveUser=? and relation=?";
+        PreparedStatement statement = null;
+        try{
+            statement = dataBase.prepareStatement(query);
+            statement.setString(1, userName);
+            statement.setString(2, userFriend);
+            statement.setInt(3, friendType);
+            ResultSet rs = statement.executeQuery();
+            result = rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return result;
     }
 

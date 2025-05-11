@@ -2,6 +2,7 @@ package com.yychat.control;
 
 import com.yychat.model.Message;
 import com.yychat.model.MessageType;
+import com.yychat.model.User;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -76,7 +77,42 @@ public class ServerReceiverThread extends Thread {
                             sendMessage(socket, message);
                         }
                         case MessageType.USER_ADD_NEW_FRIEND -> {
+                            String sender = message.getSender();
+                            System.out.println("<UNK>" + sender + "<UNK>");
+                            //是否拥有这名用户
+                            if(DBUtil.hasUser(message.getContent())){
+                                //这名用户是否已经是请求用户的朋友
+                                System.out.println("<UNK>");
+                                if(DBUtil.isUsersFriend(sender,message.getContent(),1)){
+                                    message.setMessageType(MessageType.USER_ADD_NEW_FRIEND_FAILURE_ALREADY_FRIEND);
+                                }
+                                else{
+                                    //添加好友关系
+                                    DBUtil.insertIntoFriend(sender,message.getContent(),1);
+                                    message.setMessageType(MessageType.USER_ADD_NEW_FRIEND_SUCCESS);
+                                    System.out.println("success");
+                                }
+                            }
+                            else{
 
+                                message.setMessageType(MessageType.USER_ADD_NEW_FRIEND_FAILURE_NO_USER);
+                            }
+                            message.setReceiver(sender);
+                            message.setSender("Server");
+                            System.out.println(message.getMessageType());
+                            sendMessage(socket, message);
+                        }
+                        case MessageType.IS_FRIEND_ONLINE -> {
+                            Set<String> onlineFriendSet = YYchatServer.getUserSocketMap().keySet();
+                            if(onlineFriendSet.contains(message.getContent())){
+                                message.setMessageType(MessageType.IS_FRIEND_ONLINE_SUCCESS);
+                            }
+                            else{
+                                message.setMessageType(MessageType.IS_FRIEND_ONLINE_FAILURE);
+                            }
+                            message.setReceiver(message.getSender());
+                            message.setSender("Server");
+                            sendMessage(socket, message);
                         }
                     }
                 }
