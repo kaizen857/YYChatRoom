@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
 
 public class DBUtil {
     private static final String db_url = "jdbc:mysql://localhost:3306/yychat2022s?useUnicode=true&characterEncoding=utf-8";
@@ -123,5 +124,22 @@ public class DBUtil {
             e.printStackTrace();
         }
         return count;
+    }
+
+    public static boolean insertChatMessage(String from, String to, String content, Date time){
+        boolean result = false;
+        String query="insert into message(from,to,content,sendtime) values(?,?,?,?)";
+        PreparedStatement statement=null;
+        try{
+            statement = dataBase.prepareStatement(query);
+            statement.setString(1, from);
+            statement.setString(2, to);
+            statement.setString(3, content);
+            statement.setTimestamp(4,new java.sql.Timestamp(time.getTime()));
+            result = (statement.executeUpdate() > 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

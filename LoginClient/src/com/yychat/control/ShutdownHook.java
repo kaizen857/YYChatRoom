@@ -13,14 +13,20 @@ public class ShutdownHook extends Thread implements Runnable{
     public void run() {
         System.out.println("ShutdownHook execute start...");
         try {
-            ClientLogin.getClientReceiverThread().interrupt();
-            Message message = new Message();
-            message.setMessageType(MessageType.EXIT);
-            message.setSender(FriendList.getUserName());
-            ObjectOutputStream out = new ObjectOutputStream(YYchatClientConnection.getSocket().getOutputStream());
-            out.writeObject(message);
-            //out.close();
-            YYchatClientConnection.getSocket().close();
+            ClientReceiverThread thread = ClientLogin.getClientReceiverThread();
+            if(thread != null) {
+                thread.interrupt();
+            }
+            if(YYchatClientConnection.getSocket() != null
+                    && YYchatClientConnection.getSocket().isConnected()) {
+                Message message = new Message();
+                message.setMessageType(MessageType.EXIT);
+                message.setSender(FriendList.getUserName());
+                ObjectOutputStream out = new ObjectOutputStream(YYchatClientConnection.getSocket().getOutputStream());
+                out.writeObject(message);
+                //out.close();
+                YYchatClientConnection.getSocket().close();
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }

@@ -81,7 +81,7 @@ public class FriendList extends JFrame {
         friendListPanel = new JPanel(new GridLayout(0,1));//friendList.length
         friendLabel = new JLabel[friendList.length];
         for(int i=0;i<friendList.length;i++){
-            if(friendList[i] != null){
+            if(friendList[i] != null && !friendList[i].isEmpty()){
                 ImageIcon icon = new ImageIcon("res/"+ i%6 +".jpg");
                 friendLabel[i] = new JLabel(friendList[i],icon,JLabel.LEFT);
                 if(!friendLabel[i].getText().equals(name)){
@@ -174,19 +174,23 @@ public class FriendList extends JFrame {
     }
 
     public void activeOnlineFriendIcon(String s){
-        String[] onlineFriendsName = s.split(" ");
-        for(int i = 0; i < onlineFriendsName.length; i++){
-            for(int j = 0; j < friendLabel.length; j++){
-                if(friendLabel[j].getText().equals(onlineFriendsName[i])){
-                    friendLabel[j].setEnabled(true);
+        if(!s.isEmpty()){
+            String[] onlineFriendsName = s.split(" ");
+            for (String string : onlineFriendsName) {
+                for (JLabel jLabel : friendLabel) {
+                    if (jLabel != null && jLabel.getText().equals(string)) {
+                        jLabel.setEnabled(true);
+                    }
                 }
             }
         }
     }
     public void activeNewOnlineFriendIcon(String s){
-        for(int i = 0; i < friendLabel.length; i++){
-            if(friendLabel[i].getText().equals(s)){
-                friendLabel[i].setEnabled(true);
+        if(!s.isEmpty()){
+            for (JLabel jLabel : friendLabel) {
+                if (jLabel != null && jLabel.getText().equals(s)) {
+                    jLabel.setEnabled(true);
+                }
             }
         }
     }
