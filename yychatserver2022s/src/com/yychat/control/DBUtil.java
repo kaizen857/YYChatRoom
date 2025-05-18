@@ -128,7 +128,7 @@ public class DBUtil {
 
     public static boolean insertChatMessage(String from, String to, String content, Date time){
         boolean result = false;
-        String query="insert into message(from,to,content,sendtime) values(?,?,?,?)";
+        String query="insert into message(from_user,to_user,content,sendtime) values(?,?,?,?)";
         PreparedStatement statement=null;
         try{
             statement = dataBase.prepareStatement(query);

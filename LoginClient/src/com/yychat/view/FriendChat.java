@@ -23,9 +23,9 @@ public class FriendChat extends JFrame implements KeyListener {
 
         JTextField messageField = new JTextField(15);
         messageField.addKeyListener(this);
-        messageField.setEditable(false);
-        messageField.setText("测试测试测试测试");
-        messageField.setBorder(null);
+//        messageField.setEditable(false);
+//        messageField.setText("测试测试测试测试");
+//        messageField.setBorder(null);
         sendButton.addActionListener(e ->
         {
             String msg = messageField.getText();
@@ -80,6 +80,6 @@ public class FriendChat extends JFrame implements KeyListener {
 
     }
     public void append(Message message){
-        textArea.append(message.getSender() + ": " + message.getContent() + "\r\n");
+        textArea.append(message.getTime().toString() + "\r\n" + message.getSender() + ": " + message.getContent() + "\r\n");
     }
 }

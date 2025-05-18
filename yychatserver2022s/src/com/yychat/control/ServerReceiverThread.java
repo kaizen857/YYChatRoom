@@ -26,14 +26,14 @@ public class ServerReceiverThread extends Thread {
                             System.out.println(message.getSender()
                                     + "对" + message.getReceiver()
                                     + "说：" + message.getContent());
-                            String receiver = message.getReceiver();
-                            String content = message.getContent();
-                            Socket receiverSocket = YYchatServer.getUserSocket(receiver);
-                            System.out.println("接收方" + receiver + "的socket对象" + receiverSocket);
+                            message.setTime(new java.util.Date());
+                            DBUtil.insertChatMessage(message.getSender(),message.getReceiver(),message.getContent(),message.getTime());
+                            Socket receiverSocket = YYchatServer.getUserSocket(message.getReceiver());
+                            System.out.println("接收方" + message.getReceiver() + "的socket对象" + receiverSocket);
                             if (receiverSocket != null) {
                                 sendMessage(receiverSocket, message);
                             } else {
-                                System.out.println(receiver + "不在线上");
+                                System.out.println(message.getReceiver() + "不在线上");
                             }
                         }
                         case MessageType.EXIT -> {
