@@ -8,16 +8,30 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class YYchatServer {
+public class YYchatServer extends Thread {
     private static HashMap<String,Socket> userSocketMap = new HashMap<>();
 
     public YYchatServer(){
+
+    }
+    public static Socket getUserSocket(String userName){
+        return (Socket) userSocketMap.get(userName);
+    }
+    public static HashMap<String,Socket> getUserSocketMap(){
+        return userSocketMap;
+    }
+    private List<ServerReceiverThread> receiverThreads = new ArrayList<>();
+
+    @Override
+    public void run() {
         try{
             ServerSocket serverSocket = new ServerSocket(3456);
             System.out.println("服务器启动成功，正在监听3456端口...");
-            while(true){
+            while(!this.isInterrupted()){
                 Socket socket = serverSocket.accept();
                 System.out.println("连接成功" + socket);
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -38,7 +52,9 @@ public class YYchatServer {
                         message.setMessageType(MessageType.LOGIN_VALIDATE_SUCCESS);
                         out.writeObject(message);
                         userSocketMap.put(user.getUserName(), socket);
-                        new ServerReceiverThread(socket).start();
+                        ServerReceiverThread tmp = new ServerReceiverThread(socket);
+                        receiverThreads.add(tmp);
+                        tmp.start();
                         System.out.println("启动线程成功！");
                     }
                     else{
@@ -68,14 +84,14 @@ public class YYchatServer {
                     socket.close();
                 }
             }
+
+            System.out.println("关闭服务器");
+            for(ServerReceiverThread tmp : receiverThreads){
+                tmp.interrupt();
+            }
+            System.out.println("关闭服务器成功");
         }catch(Exception e){
             e.printStackTrace();
         }
-    }
-    public static Socket getUserSocket(String userName){
-        return (Socket) userSocketMap.get(userName);
-    }
-    public static HashMap<String,Socket> getUserSocketMap(){
-        return userSocketMap;
     }
 }

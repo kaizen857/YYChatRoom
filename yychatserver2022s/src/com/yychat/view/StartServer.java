@@ -6,15 +6,20 @@ import javax.swing.*;
 import java.awt.*;
 
 public class StartServer extends JFrame {
+    YYchatServer server = null;
     public StartServer(){
         JButton start = new JButton("启动服务器");
         start.setFont(new Font("宋体",Font.BOLD,25));
         start.addActionListener(e->{
-            YYchatServer server = new YYchatServer();
+            server = new YYchatServer();
+            server.start();
         });
 
 
         JButton stop = new JButton("停止服务器");
+        stop.addActionListener(e->{
+            server.interrupt();
+        });
         stop.setFont(new Font("宋体",Font.BOLD,25));
 
         this.setLayout(new GridLayout(1,2));
@@ -23,6 +28,7 @@ public class StartServer extends JFrame {
         this.setSize(400,100);
         this.setLocationRelativeTo(null);
         this.setIconImage(new ImageIcon("./res/duck2.gif").getImage());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("YYchat服务器");
         this.setVisible(true);
     }

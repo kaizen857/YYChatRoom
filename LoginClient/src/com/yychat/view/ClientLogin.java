@@ -9,6 +9,8 @@ import com.yychat.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -57,6 +59,25 @@ public class ClientLogin extends JFrame{
         JButton registerButton = new JButton(new ImageIcon("./res/register.gif"));
         JButton cancelButton = new JButton(new ImageIcon("./res/cancel.jpg"));
         JPanel buttonPanel = new JPanel();
+
+        passwordTextBox.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    loginButton.doClick();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
 
         //登录
         loginButton.addActionListener(event -> {
@@ -119,6 +140,8 @@ public class ClientLogin extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("YY聊天");
         this.setVisible(true);
+        this.repaint();
+
     }
 
     private void sendMessage(Socket socket, Message message){
@@ -136,6 +159,7 @@ public class ClientLogin extends JFrame{
     }
 
     public static void main(String[] args) {
+//        System.out.println("Java版本: " + System.getProperty("java.version"));
         Runtime.getRuntime().addShutdownHook(new ShutdownHook());
         ClientLogin frame = new ClientLogin();
     }

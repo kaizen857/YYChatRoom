@@ -14,22 +14,29 @@ import java.io.OutputStream;
 
 public class FriendChat extends JFrame implements KeyListener {
     private JButton sendButton = new JButton("发送");
-    private JTextArea textArea = new JTextArea();
+//    private JTextArea textArea = new JTextArea();
     public FriendChat(String sender,String receiver) {
-        textArea.setForeground(Color.red);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+//        textArea.setForeground(Color.red);
+//        textArea.setEditable(false);
+        JPanel panel = new JPanel(new GridLayout(0,1));
+        panel.setAlignmentX(0);
+        panel.setAlignmentY(0);
+        JScrollPane scrollPane = new JScrollPane(panel);
+
         this.add(scrollPane, BorderLayout.CENTER);
 
         JTextField messageField = new JTextField(15);
         messageField.addKeyListener(this);
-//        messageField.setEditable(false);
-//        messageField.setText("测试测试测试测试");
-//        messageField.setBorder(null);
         sendButton.addActionListener(e ->
         {
             String msg = messageField.getText();
-            textArea.append(msg+"\n");
+            JLabel label = new JLabel(msg);
+            label.setAlignmentX(0);
+            label.setAlignmentY(0);
+            panel.add(label);
+            panel.revalidate();
+            panel.repaint();
+//            textArea.append(msg+"\n");
             messageField.setText("");
             Message message = new Message();
             message.setSender(sender);
@@ -58,7 +65,6 @@ public class FriendChat extends JFrame implements KeyListener {
         this.setTitle(receiver + "聊天界面");
         this.setIconImage(new ImageIcon("./res/duck2.gif").getImage());
         this.setVisible(true);
-
     }
     public static void main(String[] args) {
         FriendChat  tmp= new FriendChat("def","abc");
@@ -80,6 +86,6 @@ public class FriendChat extends JFrame implements KeyListener {
 
     }
     public void append(Message message){
-        textArea.append(message.getTime().toString() + "\r\n" + message.getSender() + ": " + message.getContent() + "\r\n");
+//        textArea.append(message.getTime().toString() + "\r\n" + message.getSender() + ": " + message.getContent() + "\r\n");
     }
 }
