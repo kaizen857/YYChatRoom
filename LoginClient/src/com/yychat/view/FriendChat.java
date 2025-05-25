@@ -11,32 +11,33 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 public class FriendChat extends JFrame implements KeyListener {
     private JButton sendButton = new JButton("发送");
-//    private JTextArea textArea = new JTextArea();
+    private JTextArea textArea = new JTextArea();
     public FriendChat(String sender,String receiver) {
-//        textArea.setForeground(Color.red);
-//        textArea.setEditable(false);
-        JPanel panel = new JPanel(new GridLayout(0,1));
-        panel.setAlignmentX(0);
-        panel.setAlignmentY(0);
-        JScrollPane scrollPane = new JScrollPane(panel);
-
-        this.add(scrollPane, BorderLayout.CENTER);
-
+        textArea.setForeground(Color.red);
+        textArea.setEditable(false);
+//        JPanel panel = new JPanel(new GridLayout(0,1));
+//        panel.setAlignmentX(0);
+//        panel.setAlignmentY(0);
+//        JScrollPane scrollPane = new JScrollPane(panel);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+//        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(scrollPane);
         JTextField messageField = new JTextField(15);
         messageField.addKeyListener(this);
         sendButton.addActionListener(e ->
         {
             String msg = messageField.getText();
             JLabel label = new JLabel(msg);
-            label.setAlignmentX(0);
             label.setAlignmentY(0);
-            panel.add(label);
-            panel.revalidate();
-            panel.repaint();
-//            textArea.append(msg+"\n");
+//            panel.add(label);
+//            panel.revalidate();
+//            panel.repaint();
+            Date date = new Date(new java.util.Date().getTime());
+            textArea.append(date + "\r\n" + msg+"\n");
             messageField.setText("");
             Message message = new Message();
             message.setSender(sender);
@@ -86,6 +87,6 @@ public class FriendChat extends JFrame implements KeyListener {
 
     }
     public void append(Message message){
-//        textArea.append(message.getTime().toString() + "\r\n" + message.getSender() + ": " + message.getContent() + "\r\n");
+        textArea.append(message.getTime().toString() + "\r\n" + message.getSender() + ": " + message.getContent() + "\r\n");
     }
 }
