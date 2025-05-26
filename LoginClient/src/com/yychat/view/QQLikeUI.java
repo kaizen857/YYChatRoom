@@ -4,211 +4,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Ellipse2D;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-
-class InvisibleSplitPaneDivider extends BasicSplitPaneDivider {
-    public InvisibleSplitPaneDivider(BasicSplitPaneUI ui) {
-        super(ui);
-        // We don't want any border on the divider itself
-        setBorder(null);
-        // The background color can be set if needed, but paint() override is key
-        // setBackground(new Color(0,0,0,0)); // Transparent background
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        // Override paint to do nothing, making the divider visually disappear.
-        // The area will still be interactive due to the dividerSize.
-        // If you want to ensure it's "transparent" by painting the parent's background:
-        // Graphics2D g2d = (Graphics2D) g.create();
-        // g2d.setColor(splitPane.getBackground()); // Or a specific transparent color
-        // g2d.fillRect(0, 0, getWidth(), getHeight());
-        // g2d.dispose();
-        // For true invisibility, just leave this method empty.
-    }
-
-    // Optional: Ensure the divider has a minimum size for interaction if desired,
-    // though JSplitPane's dividerSize property is the main controller.
-}
-
-// Custom UI that uses the InvisibleSplitPaneDivider
-class InvisibleSplitPaneUI extends BasicSplitPaneUI {
-    @Override
-    public BasicSplitPaneDivider createDefaultDivider() {
-        return new InvisibleSplitPaneDivider(this);
-    }
-}
-
-class RoundedAvatar extends JPanel {
-    private Image image;
-    private Color placeholderColor;
-    private int diameter;
-
-    public RoundedAvatar(int diameter, String imagePath) {
-        this.diameter = Math.min(diameter, 80); // Max 80px
-        setPreferredSize(new Dimension(this.diameter, this.diameter));
-        setOpaque(false);
-        try {
-            if (imagePath != null) {
-                this.image = new ImageIcon(imagePath).getImage();
-            }
-        } catch (Exception e) {
-            this.image = null; // Fallback to color if image fails
-        }
-        if (this.image == null) {
-            this.placeholderColor = new Color((int)(Math.random() * 0xFFFFFF));
-        }
-    }
-
-    public RoundedAvatar(int diameter, Color placeholderColor) {
-        this.diameter = Math.min(diameter, 80);
-        this.placeholderColor = placeholderColor;
-        setPreferredSize(new Dimension(this.diameter, this.diameter));
-        setOpaque(false);
-    }
-
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        Ellipse2D.Float ellipse = new Ellipse2D.Float(0, 0, diameter - 1, diameter - 1);
-        g2d.setClip(ellipse);
-
-        if (image != null) {
-            g2d.drawImage(image, 0, 0, diameter, diameter, this);
-        } else {
-            g2d.setColor(placeholderColor);
-            g2d.fillRect(0, 0, diameter, diameter);
-        }
-        g2d.dispose();
-    }
-}
-
-class FriendData {
-    String id;
-    String name;
-    String avatarPath; // Placeholder for image path or color
-    Color avatarColor;
-    String lastMessage;
-    String lastMessageDate;
-    List<ChatMessageData> chatHistory;
-
-    public FriendData(String id, String name, Color avatarColor, String lastMessage, String lastMessageDate) {
-        this.id = id;
-        this.name = name;
-        this.avatarColor = avatarColor;
-        this.lastMessage = lastMessage;
-        this.lastMessageDate = lastMessageDate;
-        this.chatHistory = new ArrayList<>();
-    }
-}
-
-class ChatMessageData {
-    enum SenderType { SELF, OTHER }
-    SenderType senderType;
-    String message;
-    Date timestamp;
-    Color avatarColor; // For the sender of this message
-
-    public ChatMessageData(SenderType senderType, String message, Date timestamp, Color avatarColor) {
-        this.senderType = senderType;
-        this.message = message;
-        this.timestamp = timestamp;
-        this.avatarColor = avatarColor;
-    }
-}
-
-class ChatMessageBubble extends JPanel {
-    private JLabel messageLabel;
-    private JLabel timeLabel;
-    private RoundedAvatar avatar;
-    private ChatMessageData data;
-    private boolean isSelf;
-
-    public ChatMessageBubble(ChatMessageData data) {
-        this.data = data;
-        this.isSelf = data.senderType == ChatMessageData.SenderType.SELF;
-
-        setLayout(new GridBagLayout());
-        setOpaque(false); // Important for bubble-like appearance against chat background
-        setBorder(new EmptyBorder(5, 10, 5, 10));
-
-        avatar = new RoundedAvatar(30, data.avatarColor);
-        messageLabel = new JLabel("<html><body style='width: 200px;'>" + data.message + "</body></html>"); // Basic HTML for wrapping
-        messageLabel.setOpaque(true);
-        messageLabel.setBorder(new EmptyBorder(8, 12, 8, 12));
-
-
-
-        timeLabel = new JLabel();
-        timeLabel.setFont(new Font("微软雅黑", Font.PLAIN, 9));
-        timeLabel.setForeground(Color.GRAY);
-        timeLabel.setVisible(false); // Initially hidden
-
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        // Configure based on sender
-        if (isSelf) {
-            messageLabel.setBackground(new Color(0xC9E6FF)); // Light blue for self
-            // Message first, then avatar
-            gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.EAST;
-            add(timeLabel, gbc); // Time above message
-            gbc.gridy = 1;
-            add(messageLabel, gbc);
-            gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 0; gbc.insets = new Insets(0, 5, 0, 0); gbc.anchor = GridBagConstraints.NORTHEAST;
-            add(avatar, gbc);
-        } else {
-            messageLabel.setBackground(Color.WHITE); // White for other
-            // Avatar first, then message
-            gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; gbc.insets = new Insets(0, 0, 0, 5); gbc.anchor = GridBagConstraints.NORTHWEST;
-            add(avatar, gbc);
-            gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
-            add(timeLabel, gbc); // Time above message
-            gbc.gridy = 1;
-            add(messageLabel, gbc);
-        }
-
-        // Make the bubble focusable to show time
-        setFocusable(true);
-        addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                timeLabel.setText(sdf.format(data.timestamp));
-                timeLabel.setVisible(true);
-                revalidate();
-                repaint();
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                timeLabel.setVisible(false);
-                revalidate();
-                repaint();
-            }
-        });
-        // Allow click to gain focus
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                requestFocusInWindow();
-            }
-        });
-    }
-}
-
 
 public class QQLikeUI extends JFrame {
 
@@ -219,8 +19,8 @@ public class QQLikeUI extends JFrame {
     private FriendData currentUser; // Currently logged-in user
     private FriendData currentChatFriend; // Currently chatting with
 
-    public QQLikeUI() {
-        currentUser = new FriendData("user0", "MySelf", Color.ORANGE, "", "");
+    public QQLikeUI(String userName,String userAvatarPath) {
+        currentUser = new FriendData("user0", userName, userAvatarPath, "", "");
 
         setTitle("Java Swing QQ-Like Chat - Invisible Dividers");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -263,13 +63,13 @@ public class QQLikeUI extends JFrame {
 
     private List<FriendData> createDummyFriends() {
         List<FriendData> friends = new ArrayList<>();
-        friends.add(new FriendData("friend1", "Alice", Color.PINK, "Hey there!", "10:30"));
-        friends.add(new FriendData("friend2", "Bob", Color.CYAN, "See you soon.", "09:15"));
-        friends.add(new FriendData("friend3", "Charlie", Color.GREEN, "Lunch tomorrow?", "Yesterday"));
-        friends.add(new FriendData("friend4", "Diana", Color.MAGENTA, "Good night!", "02/05"));
-        for(int i=5; i<15; i++){
-            friends.add(new FriendData("friend"+i, "User "+i, new Color((int)(Math.random() * 0xFFFFFF)), "Random msg "+i, "01/05"));
-        }
+        friends.add(new FriendData("friend1", "Alice", "./res/0.jpg", "Hey there!", "10:30"));
+        friends.add(new FriendData("friend2", "Bob", "./res/3.jpg", "See you soon.", "09:15"));
+        friends.add(new FriendData("friend3", "Charlie", "./res/4.jpg", "Lunch tomorrow?", "Yesterday"));
+        friends.add(new FriendData("friend4", "Diana", "./res/5.jpg", "Good night!", "02/05"));
+//        for(int i=5; i<15; i++){
+//            friends.add(new FriendData("friend"+i, "User "+i, new Color((int)(Math.random() * 0xFFFFFF)), "Random msg "+i, "01/05"));
+//        }
         return friends;
     }
 
@@ -288,7 +88,6 @@ public class QQLikeUI extends JFrame {
 
 
     // --- Inner Panels ---
-
     class AccountPanel extends JPanel {
         private RoundedAvatar avatarLabel;
         private JButton settingsButton;
@@ -300,7 +99,7 @@ public class QQLikeUI extends JFrame {
 
             GridBagConstraints c = new GridBagConstraints();
 
-            avatarLabel = new RoundedAvatar(60, user.avatarColor);
+            avatarLabel = new RoundedAvatar(60, user.avatarPath);
             c.gridx = 0;
             c.gridy = 0;
             c.anchor = GridBagConstraints.NORTH;
@@ -422,7 +221,7 @@ public class QQLikeUI extends JFrame {
 
                 GridBagConstraints c = new GridBagConstraints();
 
-                RoundedAvatar avatar = new RoundedAvatar(40, friend.avatarColor);
+                RoundedAvatar avatar = new RoundedAvatar(40, friend.avatarPath);
                 c.gridx = 0; c.gridy = 0; c.gridheight = 2; c.anchor = GridBagConstraints.WEST; c.insets = new Insets(0,0,0,10);
                 add(avatar, c);
 
@@ -553,7 +352,7 @@ public class QQLikeUI extends JFrame {
 
             JPanel toolbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
             toolbarPanel.setOpaque(false);
-            emojiButton = new JButton("😀"); fileButton = new JButton("📁"); imageButton = new JButton("🖼️");
+            emojiButton = new JButton("\uD83D\uDE00"); fileButton = new JButton("📁"); imageButton = new JButton("🖼️");
             emojiButton.addActionListener(e -> { System.out.println("Emoji clicked"); });
             fileButton.addActionListener(e -> { System.out.println("File clicked"); });
             imageButton.addActionListener(e -> { System.out.println("Image clicked"); });
@@ -608,7 +407,7 @@ public class QQLikeUI extends JFrame {
             button.setOpaque(false);
             button.setContentAreaFilled(false);
             button.setBorderPainted(false);
-            button.setFont(new Font("微软雅黑", Font.PLAIN, 18));
+            button.setFont(new Font("SansSerif", Font.PLAIN, 20));
             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
 
@@ -625,6 +424,7 @@ public class QQLikeUI extends JFrame {
         }
 
         private void sendMessage() {
+            //TODO: 发送信息
             String messageText = inputTextArea.getText().trim();
             if (!messageText.isEmpty() && mainFrame.getCurrentChatFriend() != null) {
                 FriendData currentChat = mainFrame.getCurrentChatFriend();
@@ -634,7 +434,7 @@ public class QQLikeUI extends JFrame {
                         ChatMessageData.SenderType.SELF,
                         messageText,
                         new Date(),
-                        currentUser.avatarColor
+                        currentUser.avatarPath
                 );
                 addMessageBubble(msgData);
                 currentChat.chatHistory.add(msgData);
@@ -645,7 +445,7 @@ public class QQLikeUI extends JFrame {
                             ChatMessageData.SenderType.OTHER,
                             "Got it: \"" + messageText + "\"",
                             new Date(),
-                            currentChat.avatarColor
+                            currentChat.avatarPath
                     );
                     addMessageBubble(replyData);
                     currentChat.chatHistory.add(replyData);
@@ -722,7 +522,7 @@ public class QQLikeUI extends JFrame {
         }
 
         SwingUtilities.invokeLater(() -> {
-            new QQLikeUI().setVisible(true);
+            new QQLikeUI("kaizen","./res/1.jpg").setVisible(true);
         });
     }
 }

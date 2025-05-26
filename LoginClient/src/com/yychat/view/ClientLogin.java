@@ -11,8 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -20,6 +19,7 @@ public class ClientLogin extends JFrame{
     public static HashMap<String, FriendList> friendListHashMap = new HashMap<String, FriendList>();
     private static ClientReceiverThread thread = null;
     public ClientLogin(){
+        //查看user.ini文件是否存在
         JLabel headImage = new JLabel(new ImageIcon("./res/head.gif"));
         this.add(headImage,"North");
         JLabel YYNumberText = new JLabel("YY号码：", JLabel.CENTER);
@@ -131,6 +131,26 @@ public class ClientLogin extends JFrame{
         buttonPanel.add(cancelButton);
 
         this.add(buttonPanel,"South");
+
+        File userInfo = new File("./userInfo.ini");
+        if(userInfo.exists()){
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(userInfo));
+                String line = reader.readLine();
+                if(line != null){
+                    numberTextBox.setText(line);
+                }
+                line = reader.readLine();
+                if(line != null && line.equals("1")){
+                    rememberPassword.setSelected(true);
+                    line = reader.readLine();
+                    passwordTextBox.setText(line);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         Image icon = new ImageIcon("./res/duck2.gif").getImage();
         this.setIconImage(icon);
