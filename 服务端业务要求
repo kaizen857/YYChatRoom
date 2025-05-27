@@ -1,0 +1,26 @@
+现在需要编写一个使用线程池技术的java聊天服务器，有以下要求：
+1. 拥有一个GUI来启动或者关闭服务器（GUI使用swing框架编写）
+2. 在GUI点击启动服务器之后会启动一个主线程，该线程监听3456端口，当该端口上有新的连接的时候开启新线程（使用线程池）处理该连接
+3. 处理该连接的线程需要处理用户登录请求，当登录成功之后循环等待用户的其他请求，直到用户发送登出信息后才关闭线程
+4. 主线程存储当前所有在线用户的信息以及对应的socket对象（使用map结构存储）
+5. 处理连接的线程需要有方法访问得到主线程中存储用户信息以及对应的socket的结构
+6. 线程池使用ThreadPoolExecutor来创建
+7. 请对上面的需求进行优化，如每个线程处理多个连接
+8. 目前已知需要处理的业务以及对应的传输数据格式如下：
+“
+    command|sender|...              (通用格式)
+    1. 1|userName|password              (用户登录请求 userName:请求者 password:密码)
+    2. 2|userName|status                (用户登录请求ACK userName:请求者 status:状态)
+    3. 3|userName|friendName            (发送新好友请求 userName:请求者 friendName:好友名字)
+    4. 4|userName|friendName|status|ImageIcon  (发送新好友请求 userName:请求者 friendName:好友名字 status:状态 ImageIcon:好友头像，即ImageIcon的二进制流)
+    5. 5|userName                       (查询所有在线的好友 userName:请求者)
+    6. 6|userName|onlineFriend          (查询所有在线的好友ACK userName:请求者 onlineFriend:在线好友名字，用 | 分割)
+    7. -1|userName                      (登出，关闭对应的socket userName:请求者)
+    8. 7|userName|friendName|content|time   (向好友发送信息 userName:发送者 friendName:接收者 content:聊天内容 time:发送时间，Time对象的二进制流)
+    9. 8|userName|ack                   (通用ACK信号 userName:发送者 ack:ack信号)
+    10. 9|userName|friendName|lastTime  (请求与好友的所有聊天记录 userName:请求者 friendName:好友名字 lastTime:客户端本地记录最后时间，lastTime为0时表示请求所有的聊天记录)
+    11. 10|userName|friendName|status   (回应userName发送的新好友的请求 userName:发送者 friendName:回应的好友 status:状态，同意或不同意)
+    12. 待定
+”
+9. 请为每个需要处理的业务都进行简单的实现，同时留下TODO标签
+10. 由于有更多的业务待定，所以解析请求时首先对command解析，然后根据command来选择不同的处理方式（可以if..else..或者使用switch结构）
